@@ -1,0 +1,40 @@
+# GitLab CI 配置（适用于 GitLab 和部分 Gitee 代码仓库）
+image: openjdk:17
+
+stages:
+  - build
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+before_script:
+  - apt-get update -qq
+  - apt-get install -y -qq wget unzip
+  - wget https://services.gradle.org/distributions/gradle-8.1.1-bin.zip -q
+  - unzip -q gradle-8.1.1-bin.zip
+  - export PATH=$PATH:$PWD/gradle-8.1.1/bin
+
+build_debug_apk:
+  stage: build
+  script:
+    - ./gradlew assembleDebug
+  artifacts:
+    paths:
+      - app/build/outputs/apk/debug/app-debug.apk
+    expire_in: 1 week
+  only:
+    - main
+    - master
+
+build_release_apk:
+  stage: build
+  script:
+    - ./gradlew assembleRelease
+  artifacts:
+    paths:
+      - app/build/outputs/apk/release/app-release-unsigned.apk
+    expire_in: 1 week
+  when: manual
+  only:
+    - main
+    - master

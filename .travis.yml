@@ -1,0 +1,16 @@
+language: java
+jdk: openjdk-17
+
+before_script:
+  - wget https://services.gradle.org/distributions/gradle-8.1.1-bin.zip -q
+  - unzip -q gradle-8.1.1-bin.zip
+  - export PATH=$PATH:$PWD/gradle-8.1.1/bin
+
+script:
+  - ./gradlew assembleDebug
+
+after_success:
+  - ls -la app/build/outputs/apk/debug/
+
+notifications:
+  email: false
